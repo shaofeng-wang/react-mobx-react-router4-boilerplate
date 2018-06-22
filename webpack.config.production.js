@@ -1,63 +1,63 @@
-var path = require("path");
-var webpack = require("webpack");
-var HtmlWebpackPlugin = require("html-webpack-plugin");
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var path = require('path')
+var webpack = require('webpack')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
     entry: {
-        vendor: ["react", "react-dom", "react-router"],
-        app: ["babel-polyfill", "./src/index"]
+        vendor: ['react', 'react-dom', 'react-router'],
+        app: ['babel-polyfill', './src/index']
     },
     output: {
-        path: path.join(__dirname, "dist"),
-        publicPath: "/",
-        filename: "assets/[name].[hash].js",
-        chunkFilename: "assets/[name].[chunkhash].js"
+        path: path.join(__dirname, 'dist'),
+        publicPath: '/',
+        filename: 'assets/[name].[hash].js',
+        chunkFilename: 'assets/[name].[chunkhash].js'
     },
-    devtool: "cheap-module-source-map",
+    devtool: 'cheap-module-source-map',
     module: {
         rules: [
             {
                 test: /\.js$/,
-                include: path.join(__dirname, "src"),
-                loader: "babel-loader",
+                include: path.join(__dirname, 'src'),
+                loader: 'babel-loader',
                 query: {
-                    presets: [
-                        ["es2015", { modules: false }],
-                        "stage-0",
-                        "react"
-                    ],
-                    plugins: [
-                        "transform-async-to-generator",
-                        "transform-decorators-legacy"
-                    ]
+                    presets: [['es2015', { modules: false }], 'stage-0', 'react'],
+                    plugins: ['transform-async-to-generator', 'transform-decorators-legacy']
                 }
             },
             {
                 test: /\.scss|css$/i,
                 use: ExtractTextPlugin.extract({
-                    fallback: "style-loader",
-                    use: [
-                        "css-loader",
-                        "postcss-loader",
-                        "resolve-url-loader",
-                        "sass-loader?sourceMap"
-                    ]
+                    fallback: 'style-loader',
+                    use: ['style-loader', 'css-loader', 'postcss-loader?sourceMap', 'resolve-url-loader', 'sass-loader?sourceMap']
                 })
             },
             {
                 test: /\.(jpe?g|png|gif|svg)$/i,
                 use: [
-                    "file-loader?hash=sha512&digest=hex&name=[hash].[ext]",
+                    'file-loader?hash=sha512&digest=hex&name=[hash].[ext]',
                     {
-                        loader: "image-webpack-loader",
+                        loader: 'image-webpack-loader',
                         options: {
-                            progressive: true,
-                            optimizationLevel: 7,
-                            interlaced: false,
+                            mozjpeg: {
+                                progressive: true,
+                                quality: 65
+                            },
+                            // optipng.enabled: false will disable optipng
+                            optipng: {
+                                enabled: true
+                            },
                             pngquant: {
-                                quality: "65-90",
+                                quality: '65-90',
                                 speed: 4
+                            },
+                            gifsicle: {
+                                interlaced: true
+                            },
+                            // the webp option will enable WEBP
+                            webp: {
+                                quality: 75
                             }
                         }
                     }
@@ -65,24 +65,24 @@ module.exports = {
             },
             {
                 test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                use: "url-loader?limit=10000&mimetype=application/font-woff"
+                use: 'url-loader?limit=10000&mimetype=application/font-woff'
             },
             {
                 test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                use: "file-loader"
+                use: 'file-loader'
             }
         ]
     },
     plugins: [
         new webpack.DefinePlugin({
-            "process.env": {
-                NODE_ENV: JSON.stringify("production")
+            'process.env': {
+                NODE_ENV: JSON.stringify('production')
             }
         }),
         new webpack.NamedModulesPlugin(),
         new webpack.optimize.OccurrenceOrderPlugin(true),
         new webpack.optimize.CommonsChunkPlugin({
-            name: "vendor",
+            name: 'vendor',
             minChunks: Infinity
         }),
         new webpack.optimize.UglifyJsPlugin({
@@ -96,10 +96,10 @@ module.exports = {
                 comments: false
             }
         }),
-        new ExtractTextPlugin("assets/styles.css"),
+        new ExtractTextPlugin('assets/styles.css'),
         new HtmlWebpackPlugin({
             hash: false,
-            template: "./index.hbs"
+            template: './index.hbs'
         })
     ]
-};
+}
